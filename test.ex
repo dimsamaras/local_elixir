@@ -13,7 +13,7 @@ defmodule MyProject do
   def list_length([]), do: 0
   def list_length([_ | tail]), do: 1 + list_length(tail)
 
-  def hello(names, lang \\ 'en')
+  def hello(names, lang \\ "en")
 
   def hello(names, lang) when is_list(names) do
     names
@@ -25,8 +25,8 @@ defmodule MyProject do
     phrase(lang) <> name
   end
 
-  defp phrase('en'), do: "Hello, "
-  defp phrase('es'), do: "Hola, "
-  defp phrase('fr'), do: "Allo, "
-  defp phrase('gr'), do: "Χαίρεται, "
+  defp phrase("en"), do: "Hello, "
+  defp phrase("es"), do: "Hola, "
+  defp phrase("fr"), do: "Allo, "
+  defp phrase("gr"), do: "Χαίρεται, "
 end
