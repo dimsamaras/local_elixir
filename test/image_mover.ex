@@ -1,3 +1,0 @@
-defmodule ImageMover do
-    
-end
