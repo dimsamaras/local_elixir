@@ -1,19 +1,10 @@
 defmodule Tictac do
-  @players {:x, :o}
-
-  def squares do
-    for row <- 1..3, col <- 1..3, into: MapSet.new(), do: %Square{row: row, col: col}
-  end
-
-  def new_board do
-    for s <- squares, into: %{}, do: {s, :empty}
-  end
+  @players [:x, :o]
 
   def check_player(player) do
-    case player do
-      :x -> {:ok, :player_valid}
-      :o -> {:ok, :player_valid}
-      _  -> {:error, :player_invalid}
+    case player in @players do
+      true -> {:ok, :player_valid}
+      _    -> {:error, :player_invalid}
     end
   end
 
