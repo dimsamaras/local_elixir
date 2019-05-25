@@ -5,7 +5,7 @@ defmodule Tictac.State do
   """
 
   alias Tictac.{Square, State}
-  @players [:x, :o]
+  @players Tictac.get_players
 
   defstruct status: :initial,
             turn:   nil,
