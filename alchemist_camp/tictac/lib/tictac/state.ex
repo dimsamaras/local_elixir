@@ -35,8 +35,8 @@ defmodule Tictac.State do
 
   def event(%State{status: :playing} = state, {:check_for_winner, winner}) do
     case winner in @players do
-      true  -> {:ok, %State{state | status: :game_over , winner: winner}}
-      _     -> {:error, :invalid_player}
+      true  -> {:ok, %State{state | status: :game_over , winner: winner, turn: nil}}
+      _     -> {:ok, state}
     end
   end
 
@@ -46,6 +46,10 @@ defmodule Tictac.State do
       :game_over -> {:ok, %State{state | status: :game_over, winner: :tie}}
       _          -> {:error, :invalid_game_over_status}
     end
+  end
+
+  def event(%State{status: :game_over} = state , {:game_over?, _}) do
+    {:ok, state}
   end
 
   def event(state, action) do
