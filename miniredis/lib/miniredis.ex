@@ -7,13 +7,6 @@ defmodule Miniredis do
   use GenServer
 
   @doc """
-  GenServer.init/1 callback
-  """
-  def init(_) do
-    {:ok, %{}}
-  end
-
-  @doc """
   Client Interface
   """
   def start_link(opts \\ []) do
@@ -36,8 +29,17 @@ defmodule Miniredis do
     GenServer.cast(__MODULE__, {:set_async, key, value})
   end
 
+  def die, do: GenServer.call(__MODULE__, :die)
+
   @doc """
-  handle_call/3 implementations
+  GenServer.init/1 callback
+  """
+  def init(_) do
+    {:ok, %{}}
+  end
+
+  @doc """
+  handle_call/3 callback implementations
   """
   def handle_call({:set, key, value}, _from, state) do
     {:reply, :ok, Map.merge(state, %{key => value})}
@@ -55,6 +57,13 @@ defmodule Miniredis do
     {:reply, state, state}
   end
 
+  def handle_call(:die, state) do
+    {:reply, state, state}
+  end
+
+  @doc """
+  handle_castl/2 callback implementations
+  """
   def handle_cast({:set_async, key, value}, state) do
     {:noreply, Map.merge(state, %{key => value})}
   end
