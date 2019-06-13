@@ -19,3 +19,7 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/relationship](https://hexdocs.pm/relationship).
 
+
+https://www.dailydrip.com/topics/elixir/drips/genstatemachine
+
+{:gen_state_machine, "~> 2.0"}
