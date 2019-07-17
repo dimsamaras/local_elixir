@@ -36,3 +36,7 @@ defmodule ClientCode do
   GenericCode.__using__(...)
 end
 ```
+
+__\_\_ENV\_\___
+
+The code relies on \_\_ENV__ special form that can be used to inject all sort of compile-time informations (e.g. line number and file) in the final AST. \_\_ENV__ is a struct and whenever you use it in the code, it will be expanded in compile time to appropriate value. Hence, wherever in code we write \_\_ENV__ .file the resulting bytecode will contain the (binary) string constant with the containing file name.
