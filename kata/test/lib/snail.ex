@@ -22,48 +22,90 @@ defmodule Snail do
     if len == 0 do
       []
     else
-      get_the_index([], 0, 0, matrix, 0, len, len)
+      get_the_index([], matrix, 0, len - 1)
     end
   end
 
-  def get_the_index(output, row_index, col_index, matrix, s, n, len) do
-    Logger.debug("row: #{row_index}")
-    Logger.debug("col: #{col_index}")
+  def get_the_index(output, matrix, s, e) do
     Logger.debug("start: #{s}")
-    Logger.debug("end: #{n}")
-    Logger.debug("size: #{len}")
+    Logger.debug("end: #{e}")
 
-    if 2 * s < len and length(output) < 4 * (n - s) do
-      item =
-        matrix
-        |> Enum.at(row_index)
-        |> Enum.at(col_index)
+    cond do
+      e - s > 0 ->
+        Logger.debug("outer: #{e - s}")
 
-      output = output ++ [item]
+        Logger.debug("east")
+        # walk east
+        output =
+          Enum.reduce(s..e, output, fn i, output ->
+            item =
+              matrix
+              |> Enum.at(s)
+              |> Enum.at(i)
 
-      cond do
-        # get the first row
-        row_index == s and col_index < n - 1 ->
-          get_the_index(output, row_index, col_index + 1, matrix, s, n, len)
+            output ++ [item]
+          end)
 
-        # get last column
-        col_index == n - 1 and row_index < n - 1 ->
-          get_the_index(output, row_index + 1, col_index, matrix, s, n, len)
+        # walk down
+        Logger.debug("down")
 
-        # get last row
-        row_index == n - 1 and col_index > s ->
-          get_the_index(output, row_index, col_index - 1, matrix, s, n, len)
+        output =
+          Enum.reduce((s + 1)..e, output, fn i, output ->
+            item =
+              matrix
+              |> Enum.at(i)
+              |> Enum.at(e)
 
-        # get the first column
-        row_index > s and col_index == s ->
-          get_the_index(output, row_index - 1, col_index, matrix, s, n, len)
+            output ++ [item]
+          end)
 
-        # start over with inner array
-        row_index == s and col_index == s ->
-          get_the_index(output, s + 1, s + 1, matrix, s + 1, n - 1, len)
-      end
-    else
-      output
+        # walk west
+        Logger.debug("west")
+
+        output =
+          Enum.reduce((e - 1)..s, output, fn i, output ->
+            item =
+              matrix
+              |> Enum.at(e)
+              |> Enum.at(i)
+
+            output ++ [item]
+          end)
+
+        # walk up
+        output =
+          if e - s > 1 do
+            Logger.debug("up")
+
+            output =
+              Enum.reduce((e - 1)..(s + 1), output, fn i, output ->
+                item =
+                  matrix
+                  |> Enum.at(i)
+                  |> Enum.at(s)
+
+                output ++ [item]
+              end)
+          else
+            output
+          end
+
+        get_the_index(output, matrix, s + 1, e - 1)
+
+      e - s == 0 ->
+        Logger.debug("last inner: #{e - s}")
+
+        item =
+          matrix
+          |> Enum.at(e)
+          |> Enum.at(e)
+
+        output = output ++ [item]
+        get_the_index(output, matrix, s + 1, e - 1)
+
+      e - s < 0 ->
+        Logger.debug("will print: #{e - s}")
+        output
     end
   end
 end
