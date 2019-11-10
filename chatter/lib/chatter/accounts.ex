@@ -4,9 +4,10 @@ defmodule Chatter.Accounts do
   """
 
   import Ecto.Query, warn: false
+  # import Comeonin.Argon2, only: [checkpw: 2, dummy_checkpw: 0]
   alias Chatter.Repo
 
-  alias Chatter.Accounts.User
+  alias Chatter.Accounts.{Credential, User}
 
   @doc """
   Returns the list of users.
@@ -35,7 +36,27 @@ defmodule Chatter.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user!(id) do
+    Repo.get!(User, id)
+    |> Repo.preload(:credential)
+  end
+
+  def authenticate_by_email_pass(email, passwd) do
+    cred =
+      Repo.get_by(Credential, email: email)
+      |> Repo.preload(:user)
+
+    cond do
+      cred && passwd == cred.password_hash ->
+        {:ok, cred.user}
+
+      cred ->
+        {:error, :unauthorized}
+
+      true ->
+        {:error, :not_found}
+    end
+  end
 
   @doc """
   Creates a user.
@@ -52,6 +73,7 @@ defmodule Chatter.Accounts do
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
+    |> Ecto.Changeset.cast_assoc(:credential, with: &Credential.registration_changeset/2)
     |> Repo.insert()
   end
 
@@ -68,8 +90,16 @@ defmodule Chatter.Accounts do
 
   """
   def update_user(%User{} = user, attrs) do
+    cred_changeset =
+      if attrs["credentials"]["password"] == "" do
+        &Credential.changeset/2
+      else
+        &Credential.registration_changeset/2
+      end
+
     user
     |> User.changeset(attrs)
+    |> Ecto.Changeset.cast_assoc(:credential, with: cred_changeset)
     |> Repo.update()
   end
 

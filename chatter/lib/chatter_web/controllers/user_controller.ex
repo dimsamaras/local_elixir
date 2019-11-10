@@ -3,6 +3,9 @@ defmodule ChatterWeb.UserController do
 
   alias Chatter.Accounts
   alias Chatter.Accounts.User
+  plug :logged_in_user when action not in [:new, :create]
+  plug :correct_user when action in [:edit, :update, :delete]
+  plug :admin_user, [pokerface: true] when action in [:index, :delete]
 
   def index(conn, _params) do
     users = Accounts.list_users()
@@ -58,5 +61,20 @@ defmodule ChatterWeb.UserController do
     conn
     |> put_flash(:info, "User deleted successfully.")
     |> redirect(to: Routes.user_path(conn, :index))
+  end
+
+  # Custom plug for the current user verification
+  defp correct_user(
+         %{assigns: %{current_user: current, admin_user: admin}, params: %{"id" => id}} = conn,
+         _params
+       ) do
+    if String.to_integer(id) == current.id || admin do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You don;t have access to that page")
+      |> redirect(to: Routes.user_path(conn, :show, current))
+      |> halt()
+    end
   end
 end

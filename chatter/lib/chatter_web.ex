@@ -23,6 +23,8 @@ defmodule ChatterWeb do
 
       import Plug.Conn
       import ChatterWeb.Gettext
+      import ChatterWeb.Plugs.Auth, only: [logged_in_user: 2, admin_user: 2]
+
       alias ChatterWeb.Router.Helpers, as: Routes
     end
   end

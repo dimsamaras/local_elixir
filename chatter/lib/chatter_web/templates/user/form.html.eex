@@ -13,6 +13,21 @@
   <%= text_input f, :username %>
   <%= error_tag f, :username %>
 
+  <%= inputs_for f, :credential, fn cf -> %>
+    <%= label cf, :email %>
+    <%= text_input cf, :email %>
+    <%= error_tag cf, :email %>
+
+    <%= label cf, :password %>
+    <%= text_input cf, :password %>
+    <%= error_tag cf, :password %>
+    
+    <%= label cf, :password_confirmation %>
+    <%= text_input cf, :password_confirmation %>
+    <%= error_tag cf, :password_confirmation %>
+
+  <% end %>
+
   <div>
     <%= submit "Save" %>
   </div>

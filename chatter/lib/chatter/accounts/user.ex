@@ -5,7 +5,7 @@ defmodule Chatter.Accounts.User do
   schema "users" do
     field :name, :string
     field :username, :string
-    has_many(:credential, Chatter.Accounts.Credential)
+    has_one(:credential, Chatter.Accounts.Credential)
     timestamps()
   end
 

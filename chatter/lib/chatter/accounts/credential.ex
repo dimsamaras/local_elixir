@@ -1,7 +1,7 @@
 defmodule Chatter.Accounts.Credential do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Comeonin.Argon2
+  # alias Comeonin.Argon2
 
   schema "credentials" do
     field :email, :string
@@ -16,26 +16,29 @@ defmodule Chatter.Accounts.Credential do
   @doc false
   def changeset(credential, attrs) do
     credential
-    |> cast(attrs, [:email, :password_hash])
-    |> validate_required([:email, :password_hash])
+    |> cast(attrs, [:email])
+    |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
   end
 
-  def registration_changeset(struct, attrs = %{}) do
+  def registration_changeset(struct, attrs \\ %{}) do
     struct
     |> changeset(attrs)
     |> cast(attrs, [:password, :password_confirmation])
-    |> validate_required(attrs, [:password, :password_confirmation])
+    |> validate_required([:password, :password_confirmation])
     |> validate_length(:password, min: 8)
     # password_cofirmation is assumed
     |> validate_confirmation(:password)
     |> hash_password()
   end
 
-  defp hash_password(%{valid?: false} = changeset), do: changeset
+  defp hash_password(%{valid?: false} = changeset) do
+    IO.inspect(changeset)
+    changeset
+  end
 
-  defp hash_password(%{valid?: true, changes: %{password: [pwd]}} = changeset) do
-    put_change(changeset, :password_hash, Argon2.hashpwsalt(pass))
+  defp hash_password(%{valid?: true, changes: %{password: passwd}} = changeset) do
+    put_change(changeset, :password_hash, passwd)
   end
 end
