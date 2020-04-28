@@ -7,7 +7,7 @@ defmodule Assertions do
       result = unquote(operator)(left, right)
 
       unless result do
-        IO.puts("Assertion with == failed!")
+        IO.puts("Assertion with #{operator} failed!")
         IO.puts("code: #{unquote(Macro.to_string(expr))}")
         IO.puts("lhs: #{left}")
         IO.puts("rhs: #{right}")
